@@ -13,7 +13,7 @@ const cli = meow(`
   Options:
     --db_host, -dh        [127.0.0.1] Database host
     --db_port, -dp        [5432] Database port
-    --db_name, -dn        [gsi360] Database name
+    --db_name, -dn        [oac] Database name
     --db_schema, -ds      [public] Database name
     --db_user, -du        [postgres] Database user
     --db_password, -dk    [postgres] Database password
@@ -166,22 +166,9 @@ async function migrate(client) {
 
         // ---------------------------------------------------------------------------------------
         // Loop throw possible modules
-        /*
-        let modules = [{
         let modules = [{
             key: 'core',
-            name: 'gis360plus_database'
-        }, {
-            key: 'cluster',
-            name: 'gis360plus_cluster_db'
-        }]
-        */
-        let modules = [{
-            key: 'core',
-            name: 'gis360plus_database'
-        },{
-            key: 'grdf',
-            name: 'gis360plus_grdf_db'
+            name: 'oac_database'
         }]
         //----------------------------------------------------------------------------------------
         let directory = path.join(__dirname, "src", "migrations")

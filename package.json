@@ -17,8 +17,12 @@
   },
   "homepage": "https://github.com/chpigea/oac_database#readme",
   "dependencies": {
+    "md5-file": "5.0.0",
+    "meow": "13.2.0",
+    "pg": "8.16.3",
+    "pgtools": "1.0.1"
   },
   "devDependencies": {
-    "cross-env": "^7.0.3"
+    "cross-env": "7.0.3"
   }
 }
