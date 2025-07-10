@@ -6,6 +6,7 @@ const pgtools = require("pgtools")
 const { Client } = require('pg')
 const meow  = require('meow')
 
+
 const cli = meow(`
   Usage:
     $ oac_database
@@ -21,7 +22,7 @@ const cli = meow(`
     --db_replace, -dr     [false] to replace the existing DB with a new one
   
   Examples:
-    $ gis360plus_database --db_name gis360_demo
+    $ oac_database --db_name oac
 `, {
     flags: {
         db_host:      { alias: 'dh', type: 'string' },
@@ -139,7 +140,7 @@ async function migrate(client) {
         } catch {
             console.warn("PostGIS extension is not installed")
         }
-
+        /*
         if(!postgis_database){
             console.log("Installing PostGIS extension...")
             await client.query("CREATE EXTENSION if not EXISTS postgis")
@@ -162,7 +163,7 @@ async function migrate(client) {
             empty_database = false
         } catch {
             console.warn("Empty (Gis360) database")
-        }
+        }*/
 
         // ---------------------------------------------------------------------------------------
         // Loop throw possible modules
@@ -171,7 +172,7 @@ async function migrate(client) {
             name: 'oac_database'
         }]
         //----------------------------------------------------------------------------------------
-        let directory = path.join(__dirname, "src", "migrations")
+        let directory = path.join(__dirname, "migrations")
         let isCoreModule = true
         let migrate_mod_field = false
         for(let m = 0; m < modules.length; m++){
