@@ -1,11 +1,12 @@
+------------------------------------------------------
 CREATE TABLE IF NOT EXISTS migrations (
     md5sum TEXT PRIMARY KEY,
     file TEXT,
     created_at TIMESTAMP DEFAULT NOW()
 );
-
-CREATE SEQUENCE USERS_ID_SEQ;
-CREATE TABLE USERS(
+------------------------------------------------------
+CREATE SEQUENCE IF NOT EXISTS USERS_ID_SEQ;
+CREATE TABLE IF NOT EXISTS USERS(
     ID          INTEGER NOT NULL DEFAULT nextval('users_id_seq'),
     NAME        VARCHAR(255) NOT NULL,
     SURNAME     VARCHAR(255) NOT NULL,
@@ -19,3 +20,4 @@ CREATE TABLE USERS(
     CONSTRAINT USERS_UQ1 UNIQUE(USERNAME),
     CONSTRAINT USERS_UQ2 UNIQUE(EMAIL)
 );
+------------------------------------------------------
