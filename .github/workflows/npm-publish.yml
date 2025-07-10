@@ -1,0 +1,90 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  checker:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check if NPM_TOKEN is available
+      run: |
+        if [ -z "${{secrets.NPM_TOKEN}}" ]; then
+          echo "NPM_TOKEN is NOT set => ${{secrets.NPM_TOKEN}}"
+          exit 1
+        else
+          echo "NPM_TOKEN is set => ${{secrets.NPM_TOKEN}}"
+        fi
+
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [23.x]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    #- name: Run tests
+    #  run: npm test
+    
+  publish-npm:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 23.x
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Configure Git identity
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        
+    - name: Bump version
+      run: npm version patch -m "ci:bump version to %s [skip ci]"
+
+    - name: Use NPM Token
+      uses: dkershner6/use-npm-token-action@v2
+      with:
+        token: ${{ secrets.NPM_TOKEN }}
+        
+    - name: Show whoami to confirm auth
+      run: npm whoami
+        
+    - name: Publish to npm
+      run: npm publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
+    - name: Push changes
+      uses: ad-m/github-push-action@v0.6.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: main
+        tags: true
+        
