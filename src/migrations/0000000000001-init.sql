@@ -21,3 +21,12 @@ CREATE TABLE IF NOT EXISTS USERS(
     CONSTRAINT USERS_UQ2 UNIQUE(EMAIL)
 );
 ------------------------------------------------------
+CREATE OR REPLACE FUNCTION oac_getversion()
+RETURNS TEXT
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  RETURN '1.0.0';
+END;
+$$;
+------------------------------------------------------

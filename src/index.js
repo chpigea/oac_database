@@ -156,14 +156,15 @@ async function migrate(client) {
                 console.warn("PgRouting extension not installed: " + e)
             }
         }
-
+        */
+        
         try {
-            let result = await client.query("SELECT gis360_getversion() as version")
-            console.log("Gis360 Version: " + JSON.stringify(result.rows[0]["version"]))
+            let result = await client.query("SELECT oac_getversion() as version")
+            console.log("OAC Version: " + JSON.stringify(result.rows[0]["version"]))
             empty_database = false
         } catch {
             console.warn("Empty (Gis360) database")
-        }*/
+        }
 
         // ---------------------------------------------------------------------------------------
         // Loop throw possible modules
@@ -181,20 +182,22 @@ async function migrate(client) {
             if(DEFAULT_CONFIG.modules.indexOf(module.key) != -1){
                 if(module.key != 'core'){
                     isCoreModule = false
-                    directory = path.join(__dirname, 'node_modules', '@sensit', module.name, 'src', 'migrations')
+                    directory = path.join(__dirname, 'node_modules', '@igea', module.name, 'src', 'migrations')
                     if(!fs.existsSync(directory)){
                         directory = path.join(__dirname, '..', module.name, 'src', 'migrations')
                     }
                 }
                 if(!migrate_mod_field) migrate_mod_field = await checkMigrationModuleField(client)
-
                 if(!empty_database){
+                    console.log("A")
                     try {
                         let sql_migrations_items = "SELECT * FROM migrations"
                         if(migrate_mod_field)
                             sql_migrations_items += " WHERE module = '" + module.key + "'"
                         let result = await client.query(sql_migrations_items);
                         existingMigrations = result.rows.map(r => r.file)
+                        console.log("B")
+                        console.log(existingMigrations)
                         migration_table = true
                     } catch {
                         //Migrations table does not exist (but an older Gis360 database version exists!)
