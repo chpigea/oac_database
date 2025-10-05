@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Database scripts for the OAC project",
   "main": "src/index.js",
+  "bin": {
+    "oac_database": "./src/index.js"
+  },
   "scripts": {
     "start": "cross-env NODE_ENV=production node src/index.js"
   },
