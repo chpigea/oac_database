@@ -1,6 +1,6 @@
 {
   "name": "@igea/oac_database",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Database scripts for the OAC project",
   "main": "src/index.js",
   "bin": {
