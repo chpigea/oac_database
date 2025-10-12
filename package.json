@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/chpigea/oac_database#readme",
   "dependencies": {
+    "inquirer": "8.2.7",
     "md5-file": "5.0.0",
     "meow": "9.0.0",
     "pg": "8.16.3",

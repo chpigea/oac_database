@@ -5,7 +5,7 @@ const md5File = require('md5-file')
 const pgtools = require("pgtools")
 const { Client } = require('pg')
 const meow  = require('meow')
-
+const inquirer = require('inquirer');
 
 const cli = meow(`
   Usage:
@@ -189,15 +189,13 @@ async function migrate(client) {
                 }
                 if(!migrate_mod_field) migrate_mod_field = await checkMigrationModuleField(client)
                 if(!empty_database){
-                    console.log("A")
                     try {
                         let sql_migrations_items = "SELECT * FROM migrations"
                         if(migrate_mod_field)
                             sql_migrations_items += " WHERE module = '" + module.key + "'"
                         let result = await client.query(sql_migrations_items);
                         existingMigrations = result.rows.map(r => r.file)
-                        console.log("B")
-                        console.log(existingMigrations)
+                        //console.log(existingMigrations)
                         migration_table = true
                     } catch {
                         //Migrations table does not exist (but an older Gis360 database version exists!)
@@ -307,25 +305,75 @@ let config = {
     schema: DEFAULT_CONFIG.schema,
 }
 
-if(DEFAULT_CONFIG.replace){
-    let pgConfig = {
-        host: config.host,
-        port: config.port,
-        user: config.user,
-        password: config.password
-    }
-    killActiveSessions(pgConfig, function(result){
-        if(result){
-            pgtools.dropdb(pgConfig, DEFAULT_CONFIG.database, function(err, res){
-                let err_message = `${err}`
-                if(!err || err_message.includes("invalid_catalog_name")) connect(config, migrate)
-                else console.error(err_message)
-            })
+inquirer.prompt([
+  {
+    type: 'input',
+    name: 'host',
+    message: 'Host:',
+    default: config.host
+  },
+  {
+    type: 'input',
+    name: 'port',
+    message: 'Port:',
+    default: config.port
+  },
+  {
+    type: 'input',
+    name: 'database',
+    message: 'Database:',
+    default: config.database
+  },
+  {
+    type: 'input',
+    name: 'schema',
+    message: 'Schema:',
+    default: config.schema
+  },
+  {
+    type: 'input',
+    name: 'user',
+    message: 'User:',
+    default: config.user
+  },
+  {
+    type: 'password',
+    name: 'password',
+    message: 'password:',
+    mask: '*',
+    default: config.password
+  }
+]).then(answers => {
+    if(DEFAULT_CONFIG.replace){
+        let pgConfig = {
+            host: answers.host,
+            port: answers.port,
+            user: answers.user,
+            password: answers.password
         }
-    })
-}else{
-    connect(config, migrate)
-}
+        killActiveSessions(pgConfig, function(result){
+            if(result){
+                pgtools.dropdb(pgConfig, DEFAULT_CONFIG.database, function(err, res){
+                    let err_message = `${err}`
+                    if(!err || err_message.includes("invalid_catalog_name")) connect(config, migrate)
+                    else console.error(err_message)
+                })
+            }
+        })
+    }else{
+        connect({
+            host: answers.host,
+            port: answers.port,
+            database: answers.database,
+            user: answers.user,
+            password: answers.password,
+            schema: answers.schema,
+        }, migrate)
+    }
+
+});
+
+
 //--------------------------------------------------------------------------------------
 
 
