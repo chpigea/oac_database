@@ -1,0 +1,9 @@
+create sequence SEQ1;
+create sequence SEQ2;
+create sequence SEQ3;
+create sequence SEQ4;
+create sequence SEQ5;
+create sequence SEQ6;
+create sequence SEQ7;
+create sequence SEQ8;
+create sequence SEQ9;
