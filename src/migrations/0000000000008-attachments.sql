@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS attachments (
+  id BIGSERIAL PRIMARY KEY,
+  mimetype TEXT NOT NULL,
+  file BYTEA NOT NULL,
+  created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now()
+);
