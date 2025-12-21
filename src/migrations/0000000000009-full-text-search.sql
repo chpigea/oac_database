@@ -32,3 +32,5 @@ BEFORE INSERT OR UPDATE ON investigations
 FOR EACH ROW EXECUTE FUNCTION update_investigations_search();
 
 CREATE INDEX idx_investigations_search ON investigations USING GIN(dataset_search);
+
+ALTER TABLE investigations ADD column id BIGINT NOT NULL default 0;
